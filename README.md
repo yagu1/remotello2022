@@ -16,7 +16,7 @@ TelloにつながったPCはサーバーからコマンドを受け取ってTell
 
 具体的には以下の図のようになります。
 
-![system](https://user-images.githubバージョンusercontent.com/55542434/135408551-2e46e065-6add-4869-bd36-7be8b3769c04.png)
+![system](https://user-images.githubusercontent.com/55542434/135413352-afe179c3-6a30-4903-83c9-c98ea3e047ab.png)
 
 # サーバーは？
 
