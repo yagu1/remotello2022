@@ -73,3 +73,5 @@ $ pip3 install redis
 - client: クライアントPCで利用するプログラム
 - server: Telloに接続するPCで利用するプログラム
 
+一応、Tello側のプログラムも掲載していますが、基本的にはクライアントPC側のプログラムだけで十分です。
+
