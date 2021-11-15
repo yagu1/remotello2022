@@ -42,7 +42,7 @@ if __name__ == '__main__':
 			if key == 27:			# 27 == ESC, exit
 				break
 			elif key == ord('m'):		# motor start (only SDK3.0)
-				r.set('command','motoron')	# r.set([Topic],[Data]) Topic is "command". Data is SDK command.
+				r.set('command','motoron')	# r.set([Topic],[Payload]) Topic is "command". Payload is SDK command.
 			elif key == ord('t'):		# takeoff
 				r.set('command','takeoff')	
 			elif key == ord('l'):		# land
