@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
 	cmd = ''
 
-	#Ctrl+cが押されるまでループ
 	# loop until you press ctrl+c
 	try:
 		while True:
@@ -35,35 +34,36 @@ if __name__ == '__main__':
 			img = fromRedis(r,'image')
 			#print(f"read image with shape {img.shape}")
 
+			# show OpenCV image
 			cv2.imshow('Image from Redis', img)
 
-			# OpenCVウィンドウでキー入力を1ms待つ
+			# wait key-input 1ms on OpenCV window
 			key = cv2.waitKey(1)
-			if key == 27:					# key が27(ESC)だったらwhileループを脱出，プログラム終了
+			if key == 27:			# 27 == ESC, exit
 				break
 			elif key == ord('m'):
 				r.set('command','motoron')
-			elif key == ord('t'):		# 離陸
+			elif key == ord('t'):		# takeoff
 				r.set('command','takeoff')
-			elif key == ord('l'):		# 着陸
+			elif key == ord('l'):		# land
 				r.set('command','land')
-			elif key == ord('w'):		# 前進
+			elif key == ord('w'):		# forward
 				r.set('command','forward 50')
-			elif key == ord('s'):		# 後進
+			elif key == ord('s'):		# back
 				r.set('command','back 50')
-			elif key == ord('a'):		# 左移動
+			elif key == ord('a'):		# move left
 				r.set('command','left 50')
-			elif key == ord('d'):		# 右移動
+			elif key == ord('d'):		# move right
 				r.set('command','right 50')
-			elif key == ord('q'):		# 左旋回
+			elif key == ord('q'):		# turn left
 				r.set('command','ccw 20')
-			elif key == ord('e'):		# 右旋回
+			elif key == ord('e'):		# turn right
 				r.set('command','cw 20')
-			elif key == ord('r'):		# 上昇
+			elif key == ord('r'):		# move up
 				r.set('command','up 30')
-			elif key == ord('f'):		# 下降
+			elif key == ord('f'):		# move down
 				r.set('command','down 30')
 
 
-	except( KeyboardInterrupt, SystemExit):    # Ctrl+cが押されたら離脱
-		print( "SIGINTを検知" )
+	except( KeyboardInterrupt, SystemExit):    # if Ctrl+c is pressed, quit program.
+		print( "Detect SIGINT." )
