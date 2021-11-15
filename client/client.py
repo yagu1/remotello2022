@@ -52,7 +52,7 @@ if __name__ == '__main__':
 			elif key == ord('s'):		# 後進
 				r.set('command','back 50')
 			elif key == ord('a'):		# 左移動
-				r.set('command','left')
+				r.set('command','left 50')
 			elif key == ord('d'):		# 右移動
 				r.set('command','right 50')
 			elif key == ord('q'):		# 左旋回
