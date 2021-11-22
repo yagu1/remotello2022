@@ -36,6 +36,7 @@ class Tello:
         self.frame = None  # numpy array BGR -- current camera output frame
         self.last_frame = None
 
+        self.pre_tof = 0
         # Conversion functions for state protocol fields
         INT_STATE_FIELDS = (
             # Tello EDU with mission pads enabled only
@@ -163,12 +164,21 @@ class Tello:
                         try:
                             value = num_type(value)
                         except ValueError as e:
-                            
                             continue
+
+                    if key=='tof':
+
+                        if value==6553:
+                            #value = state_dict[key]
+                            print(value)
+                            value = self.pre_tof
+                        
+                        self.pre_tof = value
 
                     state_dict[key] = value                
 
                 #print(state_dict)
+                self.state = state_dict
 
             except socket.error as exc:
                 print ("Caught exception socket.error : %s" % exc)
