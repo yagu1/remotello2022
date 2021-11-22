@@ -5,6 +5,7 @@ from time import sleep
 import struct
 import redis
 import numpy as np
+import json
 
 # get data from redis server and decode JPEG data
 def fromRedis(hRedis,topic):
@@ -33,6 +34,11 @@ if __name__ == '__main__':
 			# Topic name of OpenCV image is "image"
 			img = fromRedis(r,'image')
 			#print(f"read image with shape {img.shape}")
+			
+			# Topic name of Tello Status is "state"
+			json_state = r.get('state')
+			dict_state = json.loads( json_state )	# convert to Dictionary
+			print( 'Battery:%d '%(dict_state['bat']) )
 
 			# show OpenCV image
 			cv2.imshow('Image from Redis', img)
