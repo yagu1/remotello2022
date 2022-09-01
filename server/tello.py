@@ -28,7 +28,7 @@ class Tello:
 
         self.imperial = imperial
 
-        self.response = None  
+        self.response = None
         self.state = None
 
         self.is_freeze = False  # freeze current camera output
@@ -53,8 +53,8 @@ class Tello:
         self.state_field_converters: Dict[str, Union[Type[int], Type[float]]]
         self.state_field_converters = {key : int for key in INT_STATE_FIELDS}
         self.state_field_converters.update({key : float for key in FLOAT_STATE_FIELDS})
-        
-        # 
+
+        #
         self.socket_cmd   = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for sending cmd
         self.socket_info  = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for receiving status infomation
         self.socket_video = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # socket for receiving video stream
@@ -107,7 +107,7 @@ class Tello:
 
         self.socket_cmd.close()
         self.socket_video.close()
-    
+
     def read(self):
         """Return the last frame from camera."""
         if self.is_freeze:
@@ -137,7 +137,7 @@ class Tello:
     def _receive_info_thread(self):
         """Listen to responses from the Tello.
 
-        Runs as a thread, set 
+        Runs as a thread, set
 
         """
         while True:
@@ -170,12 +170,12 @@ class Tello:
 
                         if value==6553:
                             #value = state_dict[key]
-                            print(value)
+                            #print(value)
                             value = self.pre_tof
-                        
+
                         self.pre_tof = value
 
-                    state_dict[key] = value                
+                    state_dict[key] = value
 
                 #print(state_dict)
                 self.state = state_dict
@@ -214,7 +214,7 @@ class Tello:
             if self.abort_flag is True:
                 break
         timer.cancel()
-        
+
         if self.response is None:
             response = 'none_response'
         else:
@@ -223,13 +223,13 @@ class Tello:
         self.response = None
 
         return response
-    
+
     def set_abort_flag(self):
         """
         Sets self.abort_flag to True.
 
         Used by the timer in Tello.send_command() to indicate to that a response
-        
+
         timeout has occurred.
 
         """

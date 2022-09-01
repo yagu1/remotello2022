@@ -7,15 +7,16 @@ import struct
 import redis
 import numpy as np
 import json
+from sshtunnel import SSHTunnelForwarder
 
 def writeRedis(r,a,n):
 	"""Store given Numpy array 'a' in Redis under key 'n'"""
 	h, w = a.shape[:2]
 	shape = struct.pack('>II',h,w)
-	
+
 	encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
 	result, encimg = cv2.imencode('.jpg', a, encode_param)
-	
+
 	encoded = shape + encimg.tobytes()
 
 	# Store encoded data in Redis
@@ -26,10 +27,18 @@ def writeRedis(r,a,n):
 # Main Function
 def main():
 	# Redis connection
-	r = redis.Redis(host='os3-380-23015.vs.sakura.ne.jp', port=6379, db=0)
+	ssht = SSHTunnelForwarder(
+        	("163.143.132.153", 22),
+        	ssh_host_key=None,
+        	ssh_username="uavdata",
+        	ssh_password="0158423046",
+        	ssh_pkey=None,
+        	remote_bind_address=("localhost", 6379))
+	ssht.start()
+	r = redis.Redis(host='localhost', port=ssht.local_bind_port, db=0)
 
 	# make instance as "drone" using Tello class
-	drone = tello.Tello( command_timeout=.01 )  
+	drone = tello.Tello( command_timeout=.01 )
 
 	current_time = time.time()	# current time
 	pre_time = current_time		# for sending 'command' each 5 seconds
@@ -52,7 +61,7 @@ def main():
 	try:
 		while True:
 			cmd = r.get('command')
-			
+
 			if cmd != None:
 				cmd = cmd.decode()
 				if len(cmd) != 0:
@@ -63,7 +72,7 @@ def main():
 			# (A)get image
 			frame = drone.read()	# get 1 frame
 			if frame is None or frame.size == 0:		# correct data?
-				continue 
+				continue
 
 			# (B)processing
 			#image = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)		# change OpenCV color plane
@@ -114,7 +123,7 @@ def main():
 
 			# write tello info and show
 			if drone.state is not None:
-				json_state = json.dumps( drone.state ) 
+				json_state = json.dumps( drone.state )
 				#print(json_state)
 				r.set('state', json_state)
 

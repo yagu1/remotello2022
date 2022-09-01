@@ -6,6 +6,7 @@ import struct
 import redis
 import numpy as np
 import json
+from sshtunnel import SSHTunnelForwarder
 
 # get data from redis server and decode JPEG data
 def fromRedis(hRedis,topic):
@@ -24,7 +25,15 @@ def fromRedis(hRedis,topic):
 # Main Function
 if __name__ == '__main__':
 	# Redis connection
-	r = redis.Redis(host='os3-380-23015.vs.sakura.ne.jp', port=6379, db=0)
+	ssht = SSHTunnelForwarder(
+        	("163.143.132.153", 22),
+        	ssh_host_key=None,
+        	ssh_username="uavdata",
+        	ssh_password="0158423046",
+        	ssh_pkey=None,
+        	remote_bind_address=("localhost", 6379))
+	ssht.start()
+	r = redis.Redis(host='localhost', port=ssht.local_bind_port, db=0)
 
 	cmd = ''
 
@@ -33,8 +42,7 @@ if __name__ == '__main__':
 		while True:
 			# Topic name of OpenCV image is "image"
 			img = fromRedis(r,'image')
-			#print(f"read image with shape {img.shape}")
-			
+
 			# Topic name of Tello Status is "state"
 			json_state = r.get('state')
 			dict_state = json.loads( json_state )	# convert to Dictionary
@@ -50,7 +58,7 @@ if __name__ == '__main__':
 			elif key == ord('m'):		# motor start (only SDK3.0)
 				r.set('command','motoron')	# r.set([Topic],[Payload]) Topic is "command". Payload is SDK command.
 			elif key == ord('t'):		# takeoff
-				r.set('command','takeoff')	
+				r.set('command','takeoff')
 			elif key == ord('l'):		# land
 				r.set('command','land')
 			elif key == ord('w'):		# forward
