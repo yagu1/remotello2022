@@ -4,6 +4,7 @@ Remote Tello control method using redis
 # remotelloとは？
 
 Ryze Tech. のTelloシリーズを、インターネット越しに操縦するためのシステムです。
+2022年の会津大で行われるロボカップジャパンオープン　フライングロボットチャレンジで利用します。
 
 # どんな仕組み？
 
@@ -52,20 +53,22 @@ ssl/tlsのオレオレ認証ぐらいはかけたほうが良いですかね。�
 - クライアントPC：　有線または無線LAN(インターネット接続用）
 
 - 使用言語：　Python3
-- 主な使用ライブラリ：　OpenCV, NumPy, Redis
+- 主な使用ライブラリ：　OpenCV, NumPy, Redis, SSHTunnel
 
 **動作確認したバージョン**
 
-- Python3 3.8.10
-- opencv-pythonおよびopencv-contrib-python 4.5.3.56
-- numpy 1.21.2
-- redis 3.5.3
+- Python3 3.8.10, 3.8.7
+- opencv-pythonおよびopencv-contrib-python 4.5.3.56 , 4.6.0.66
+- numpy 1.21.2, 1.22.4
+- redis 3.5.3, 
+- sshtunnel 0.4.0
 
 # 依存ライブラリのインストール
 
 ```
 $ pip3 install opencv-python opencv-contrib-python
 $ pip3 install redis
+$ pip3 install sshtunnel
 ```
 
 # このgitの構成
