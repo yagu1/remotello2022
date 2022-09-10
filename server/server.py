@@ -36,6 +36,7 @@ def main():
         	remote_bind_address=("localhost", 6379))
 	ssht.start()
 	r = redis.Redis(host='localhost', port=ssht.local_bind_port, db=0)
+	#r = redis.Redis(host='', port=6379, db=0)
 
 	# make instance as "drone" using Tello class
 	drone = tello.Tello( command_timeout=.01 )
@@ -57,6 +58,10 @@ def main():
 	cv2.createTrackbar("Tof", "OpenCV Window", 50, 1000, nothing)
 	cv2.createTrackbar("h", "OpenCV Window", 50, 1000, nothing)
 
+	# Message Initialize
+	r.set('command', '')
+	r.set('response', '')
+	res = ""
 	# loop until Ctrl+c pressed
 	try:
 		while True:
@@ -67,7 +72,7 @@ def main():
 				if len(cmd) != 0:
 					print(cmd)
 					r.set('command', '')
-					drone.send_command(cmd)
+					res = drone.send_command(cmd)
 
 			# (A)get image
 			frame = drone.read()	# get 1 frame
@@ -94,33 +99,37 @@ def main():
 			if key == 27:					# 27 = ESC key), exit program
 				break
 			elif key == ord('m'):				# motor start
-				drone.send_command('motoron')
+				res = drone.send_command('motoron')
 			elif key == ord('o'):				# motor stop
-				drone.send_command('motoroff')
+				res = drone.send_command('motoroff')
 			elif key == ord('t'):
-				drone.takeoff()				# takeoff
+				res = drone.takeoff()				# takeoff
 			elif key == ord('l'):
-				drone.land()					# land
+				res = drone.land()					# land
 			elif key == ord('w'):
-				drone.move_forward(0.3)		# move forward
+				res = drone.move_forward(0.3)		# move forward
 			elif key == ord('s'):
-				drone.move_backward(0.3)		# move back
+				res = drone.move_backward(0.3)		# move back
 			elif key == ord('a'):
-				drone.move_left(0.3)			# move left
+				res = drone.move_left(0.3)			# move left
 			elif key == ord('d'):
-				drone.move_right(0.3)			# move right
+				res = drone.move_right(0.3)			# move right
 			elif key == ord('q'):
-				drone.rotate_ccw(20)			# turn left
+				res = drone.rotate_ccw(20)			# turn left
 			elif key == ord('e'):
-				drone.rotate_cw(20)			# turn right
+				res = drone.rotate_cw(20)			# turn right
 			elif key == ord('r'):
-				drone.move_up(0.3)			# move up
+				res = drone.move_up(0.3)			# move up
 			elif key == ord('f'):
-				drone.move_down(0.3)			# move down
+				res = drone.move_down(0.3)			# move down
 
 			# (Y) write date to Redis
 			writeRedis(r, frame, 'image')	# write image
-
+			# write response to Redis
+			if(res != '' and res is not None):
+				print(res + ":" + cmd)
+				r.set('response', res + ":" + cmd)
+			res = ""
 			# write tello info and show
 			if drone.state is not None:
 				json_state = json.dumps( drone.state )
